@@ -17,7 +17,7 @@ local function get_match(str)
     local x = 0
     for i = #str, 1, -1 do
         local char = str:sub(i, i)
-        if not char:match("[a-zA-Z0-9%.%(%)%[%]%{%}%\"%:]") and x == 0 then
+        if not char:match("[a-zA-Z0-9%.%(%)%[%]%{%}%\"%:%*]") and x == 0 then
             return lastComponent
         end
 
