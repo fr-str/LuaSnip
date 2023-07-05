@@ -8,6 +8,37 @@ local matches = {
 	line = "^.+$",
 }
 
+local function get_match(str)
+    if str == "" then
+        return ""
+    end
+
+    local lastComponent = ""
+    local x = 0
+    for i = #str, 1, -1 do
+        local char = str:sub(i, i)
+        if not char:match("[a-zA-Z0-9%.%(%)%[%]%{%}%\"%:]") and x == 0 then
+            return lastComponent
+        end
+
+        if char == ')' or char == ']' then
+            x = x + 1
+        end
+
+        if char == '(' or char == '[' then
+            x = x - 1
+            if x < 0 then
+                return lastComponent
+            end
+        end
+
+
+        lastComponent = char .. lastComponent
+    end
+
+    return lastComponent
+end
+
 local function generate_opts(match_pattern, user_callback)
 	return {
 		callbacks = {
@@ -23,7 +54,7 @@ local function generate_opts(match_pattern, user_callback)
 						pos[2],
 						{}
 					)[1]
-					local postfix_match = line_to_cursor:match(match_pattern)
+					local postfix_match = get_match(line_to_cursor)
 						or ""
 					-- clear postfix_match-text.
 					vim.api.nvim_buf_set_text(
